@@ -32,6 +32,8 @@ export default function SettingsPage() {
   const [profileStatus, setProfileStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [profileError, setProfileError] = useState('');
   const [showSecurityModal, setShowSecurityModal] = useState(false);
+  const [showTutorialModal, setShowTutorialModal] = useState(false);
+  const [showAiModal, setShowAiModal] = useState(false);
 
   // AI Settings (Gemini & Groq)
   const [aiProvider, setAiProvider] = useState<'gemini' | 'groq'>('gemini');
@@ -206,8 +208,189 @@ export default function SettingsPage() {
 
       <div className="p-4 sm:p-8 max-w-4xl mx-auto space-y-6">
 
-        {/* Tutorial Videos Section */}
-        <div className="bg-[#18181b] border border-zinc-800 rounded-2xl overflow-hidden">
+                {/* Tutorial Videos Trigger Button */}
+        <div className="bg-[#18181b] border border-zinc-800 rounded-2xl p-6 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-red-500 to-pink-600 flex items-center justify-center shadow-lg">
+              <Video className="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <h2 className="text-xl font-bold text-white tracking-tight">Tutorial Videolar</h2>
+              <p className="text-sm text-zinc-400">O'quvchilar uchun ko'rsatma videolar — YouTube havolalari</p>
+            </div>
+          </div>
+          <button
+            onClick={() => setShowTutorialModal(true)}
+            className="px-6 py-2.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-white text-sm font-semibold transition-all border border-zinc-700 flex items-center gap-2"
+          >
+            <Video className="w-4 h-4" />
+            Sozlamalar
+          </button>
+        </div>
+
+        {/* AI Settings Trigger Button */}
+        <div className="bg-[#18181b] border border-zinc-800 rounded-2xl p-6 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-500 to-cyan-600 flex items-center justify-center shadow-lg">
+              <Brain className="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <h2 className="text-xl font-bold text-white tracking-tight">AI Sozlamalari</h2>
+              <p className="text-sm text-zinc-400">Sun'iy intellekt orqali tahlillar uchun API Key va model sozlamalari</p>
+            </div>
+          </div>
+          <button
+            onClick={() => setShowAiModal(true)}
+            className="px-6 py-2.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-white text-sm font-semibold transition-all border border-zinc-700 flex items-center gap-2"
+          >
+            <Brain className="w-4 h-4" />
+            Sozlamalar
+          </button>
+        </div>
+
+{/* Security Modal Trigger Button */}
+        <div className="bg-[#18181b] border border-zinc-800 rounded-2xl p-6 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center shadow-lg">
+              <Lock className="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <h2 className="text-xl font-bold text-white tracking-tight">Xavfsizlik</h2>
+              <p className="text-sm text-zinc-400">Login va parolingizni o'zgartiring</p>
+            </div>
+          </div>
+          <button
+            onClick={() => setShowSecurityModal(true)}
+            className="px-6 py-2.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-white text-sm font-semibold transition-all border border-zinc-700 flex items-center gap-2"
+          >
+            <Lock className="w-4 h-4" />
+            Sozlamalar
+          </button>
+        </div>
+      </div>
+
+      {/* Security Modal */}
+      {showSecurityModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+          <div className="w-full max-w-md bg-[#18181b] border border-zinc-800 rounded-2xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
+            <div className="p-5 border-b border-zinc-800 flex items-center justify-between shrink-0">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center shadow-lg">
+                  <Lock className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                  <h2 className="text-lg font-bold text-white tracking-tight">Xavfsizlik</h2>
+                  <p className="text-xs text-zinc-400">Login va parol</p>
+                </div>
+              </div>
+              <button 
+                onClick={() => {
+                  setShowSecurityModal(false);
+                  setProfileStatus('idle');
+                  setProfileError('');
+                }} 
+                className="p-2 hover:bg-zinc-800 rounded-xl text-zinc-400 hover:text-white transition-colors"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="p-5 space-y-5 overflow-y-auto">
+              <div className="flex items-center gap-3 p-3 rounded-xl bg-[#09090b] border border-zinc-800">
+                <User className="w-4 h-4 text-zinc-400" />
+                <span className="text-sm text-zinc-400">Joriy login:</span>
+                <span className="text-sm font-bold text-white font-mono">{user?.login}</span>
+              </div>
+
+              <div>
+                <label className="block text-xs text-zinc-500 mb-1.5 font-medium">Yangi login (ixtiyoriy)</label>
+                <input
+                  type="text"
+                  value={newLogin}
+                  onChange={(e) => setNewLogin(e.target.value)}
+                  placeholder="Yangi login..."
+                  className="w-full bg-[#09090b] border border-zinc-800 rounded-xl px-4 py-3 text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 transition-all"
+                />
+              </div>
+
+              <div className="border-t border-zinc-800/50" />
+
+              <div>
+                <label className="block text-xs text-zinc-500 mb-1.5 font-medium">Joriy parol (majburiy)</label>
+                <div className="relative">
+                  <input
+                    type={showCurrentPw ? 'text' : 'password'}
+                    value={currentPassword}
+                    onChange={(e) => setCurrentPassword(e.target.value)}
+                    placeholder="Joriy parol..."
+                    className="w-full bg-[#09090b] border border-zinc-800 rounded-xl px-4 py-3 pr-11 text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 transition-all"
+                  />
+                  <button type="button" onClick={() => setShowCurrentPw(!showCurrentPw)} className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white transition-colors">
+                    {showCurrentPw ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs text-zinc-500 mb-1.5 font-medium">Yangi parol (ixtiyoriy)</label>
+                <div className="relative">
+                  <input
+                    type={showNewPw ? 'text' : 'password'}
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    placeholder="Yangi parol..."
+                    className="w-full bg-[#09090b] border border-zinc-800 rounded-xl px-4 py-3 pr-11 text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 transition-all"
+                  />
+                  <button type="button" onClick={() => setShowNewPw(!showNewPw)} className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white transition-colors">
+                    {showNewPw ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
+              </div>
+
+              {profileError && (
+                <div className="flex items-center gap-2 text-red-500 text-sm font-medium p-3 rounded-lg bg-red-500/10 border border-red-500/20">
+                  <AlertCircle className="w-4 h-4 shrink-0" />
+                  {profileError}
+                </div>
+              )}
+            </div>
+
+            <div className="p-5 border-t border-zinc-800 flex items-center justify-between shrink-0 bg-[#09090b]/30">
+              <div>
+                {profileStatus === 'success' && (
+                  <div className="flex items-center gap-2 text-emerald-500 text-sm font-medium">
+                    <CheckCircle2 className="w-4 h-4" />
+                    Saqlandi
+                  </div>
+                )}
+              </div>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => {
+                    setShowSecurityModal(false);
+                    setProfileStatus('idle');
+                    setProfileError('');
+                  }}
+                  className="px-4 py-2.5 rounded-xl bg-zinc-800 text-white text-sm font-medium hover:bg-zinc-700 transition-all"
+                >
+                  Yopish
+                </button>
+                <button
+                  onClick={handleProfileSave}
+                  disabled={profileSaving}
+                  className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-gradient-to-r from-violet-600 to-purple-500 text-white text-sm font-semibold hover:opacity-90 disabled:opacity-50 transition-all shadow-lg shadow-violet-500/20"
+                >
+                  {profileSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+                  Saqlash
+                </button>
+              </div>
+            </div>
+          </div>
+              {/* Tutorial Modal */}
+      {showTutorialModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+{/* Tutorial Videos Section */}
+        <div className="w-full max-w-2xl bg-[#18181b] border border-zinc-800 rounded-2xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
           <div className="p-5 border-b border-zinc-800 flex items-center gap-4">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-red-500 to-pink-600 flex items-center justify-center shadow-lg">
               <Video className="w-5 h-5 text-white" />
@@ -216,9 +399,15 @@ export default function SettingsPage() {
               <h2 className="text-lg font-bold text-white tracking-tight">Tutorial Videolar</h2>
               <p className="text-xs text-zinc-400">O'quvchilar uchun ko'rsatma videolar — YouTube havolalari</p>
             </div>
+            <button 
+                onClick={() => setShowTutorialModal(false)} 
+                className="p-2 hover:bg-zinc-800 rounded-xl text-zinc-400 hover:text-white transition-colors ml-auto"
+              >
+                ✕
+            </button>
           </div>
 
-          <div className="p-5 space-y-8">
+          <div className="p-5 space-y-8 overflow-y-auto">
 
             {/* Video 1: Platforma ishlatish qoidalari */}
             <div className="space-y-4">
@@ -440,8 +629,14 @@ export default function SettingsPage() {
           </div>
         </div>
 
-        {/* AI Settings Section */}
-        <div className="bg-[#18181b] border border-zinc-800 rounded-2xl overflow-hidden">
+        
+        </div>
+      )}
+      {/* AI Modal */}
+      {showAiModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+{/* AI Settings Section */}
+        <div className="w-full max-w-2xl bg-[#18181b] border border-zinc-800 rounded-2xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
           <div className="p-5 border-b border-zinc-800 flex items-center gap-4">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-cyan-600 flex items-center justify-center shadow-lg">
               <Brain className="w-5 h-5 text-white" />
@@ -450,9 +645,15 @@ export default function SettingsPage() {
               <h2 className="text-lg font-bold text-white tracking-tight">AI Sozlamalari</h2>
               <p className="text-xs text-zinc-400">Sun'iy intellekt orqali tahlillar uchun API Key va model sozlamalari</p>
             </div>
+            <button 
+                onClick={() => setShowAiModal(false)} 
+                className="p-2 hover:bg-zinc-800 rounded-xl text-zinc-400 hover:text-white transition-colors ml-auto"
+              >
+                ✕
+            </button>
           </div>
 
-          <div className="p-5 space-y-5">
+          <div className="p-5 space-y-5 overflow-y-auto">
             <div>
               <label className="block text-xs text-zinc-500 mb-1.5 font-medium">AI Provayderi</label>
               <select
@@ -593,145 +794,10 @@ export default function SettingsPage() {
           </div>
         </div>
 
-        {/* Security Modal Trigger Button */}
-        <div className="bg-[#18181b] border border-zinc-800 rounded-2xl p-6 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center shadow-lg">
-              <Lock className="w-6 h-6 text-white" />
-            </div>
-            <div>
-              <h2 className="text-xl font-bold text-white tracking-tight">Xavfsizlik</h2>
-              <p className="text-sm text-zinc-400">Login va parolingizni o'zgartiring</p>
-            </div>
-          </div>
-          <button
-            onClick={() => setShowSecurityModal(true)}
-            className="px-6 py-2.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-white text-sm font-semibold transition-all border border-zinc-700 flex items-center gap-2"
-          >
-            <Lock className="w-4 h-4" />
-            Sozlamalar
-          </button>
+        
         </div>
-      </div>
-
-      {/* Security Modal */}
-      {showSecurityModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-          <div className="w-full max-w-md bg-[#18181b] border border-zinc-800 rounded-2xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
-            <div className="p-5 border-b border-zinc-800 flex items-center justify-between shrink-0">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center shadow-lg">
-                  <Lock className="w-5 h-5 text-white" />
-                </div>
-                <div>
-                  <h2 className="text-lg font-bold text-white tracking-tight">Xavfsizlik</h2>
-                  <p className="text-xs text-zinc-400">Login va parol</p>
-                </div>
-              </div>
-              <button 
-                onClick={() => {
-                  setShowSecurityModal(false);
-                  setProfileStatus('idle');
-                  setProfileError('');
-                }} 
-                className="p-2 hover:bg-zinc-800 rounded-xl text-zinc-400 hover:text-white transition-colors"
-              >
-                ✕
-              </button>
-            </div>
-
-            <div className="p-5 space-y-5 overflow-y-auto">
-              <div className="flex items-center gap-3 p-3 rounded-xl bg-[#09090b] border border-zinc-800">
-                <User className="w-4 h-4 text-zinc-400" />
-                <span className="text-sm text-zinc-400">Joriy login:</span>
-                <span className="text-sm font-bold text-white font-mono">{user?.login}</span>
-              </div>
-
-              <div>
-                <label className="block text-xs text-zinc-500 mb-1.5 font-medium">Yangi login (ixtiyoriy)</label>
-                <input
-                  type="text"
-                  value={newLogin}
-                  onChange={(e) => setNewLogin(e.target.value)}
-                  placeholder="Yangi login..."
-                  className="w-full bg-[#09090b] border border-zinc-800 rounded-xl px-4 py-3 text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 transition-all"
-                />
-              </div>
-
-              <div className="border-t border-zinc-800/50" />
-
-              <div>
-                <label className="block text-xs text-zinc-500 mb-1.5 font-medium">Joriy parol (majburiy)</label>
-                <div className="relative">
-                  <input
-                    type={showCurrentPw ? 'text' : 'password'}
-                    value={currentPassword}
-                    onChange={(e) => setCurrentPassword(e.target.value)}
-                    placeholder="Joriy parol..."
-                    className="w-full bg-[#09090b] border border-zinc-800 rounded-xl px-4 py-3 pr-11 text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 transition-all"
-                  />
-                  <button type="button" onClick={() => setShowCurrentPw(!showCurrentPw)} className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white transition-colors">
-                    {showCurrentPw ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                  </button>
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-xs text-zinc-500 mb-1.5 font-medium">Yangi parol (ixtiyoriy)</label>
-                <div className="relative">
-                  <input
-                    type={showNewPw ? 'text' : 'password'}
-                    value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
-                    placeholder="Yangi parol..."
-                    className="w-full bg-[#09090b] border border-zinc-800 rounded-xl px-4 py-3 pr-11 text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:ring-2 focus:ring-violet-500/50 focus:border-violet-500 transition-all"
-                  />
-                  <button type="button" onClick={() => setShowNewPw(!showNewPw)} className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white transition-colors">
-                    {showNewPw ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                  </button>
-                </div>
-              </div>
-
-              {profileError && (
-                <div className="flex items-center gap-2 text-red-500 text-sm font-medium p-3 rounded-lg bg-red-500/10 border border-red-500/20">
-                  <AlertCircle className="w-4 h-4 shrink-0" />
-                  {profileError}
-                </div>
-              )}
-            </div>
-
-            <div className="p-5 border-t border-zinc-800 flex items-center justify-between shrink-0 bg-[#09090b]/30">
-              <div>
-                {profileStatus === 'success' && (
-                  <div className="flex items-center gap-2 text-emerald-500 text-sm font-medium">
-                    <CheckCircle2 className="w-4 h-4" />
-                    Saqlandi
-                  </div>
-                )}
-              </div>
-              <div className="flex gap-3">
-                <button
-                  onClick={() => {
-                    setShowSecurityModal(false);
-                    setProfileStatus('idle');
-                    setProfileError('');
-                  }}
-                  className="px-4 py-2.5 rounded-xl bg-zinc-800 text-white text-sm font-medium hover:bg-zinc-700 transition-all"
-                >
-                  Yopish
-                </button>
-                <button
-                  onClick={handleProfileSave}
-                  disabled={profileSaving}
-                  className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-gradient-to-r from-violet-600 to-purple-500 text-white text-sm font-semibold hover:opacity-90 disabled:opacity-50 transition-all shadow-lg shadow-violet-500/20"
-                >
-                  {profileSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-                  Saqlash
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
+      )}
+</div>
       )}
     </div>
   );
