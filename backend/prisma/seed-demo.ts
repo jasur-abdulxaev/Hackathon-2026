@@ -108,6 +108,8 @@ async function main() {
   await prisma.group.deleteMany();
   await prisma.normative.deleteMany();
   await prisma.category.deleteMany();
+  // telegram_links foreign key ni avval tozalash kerak
+  try { await (prisma as any).telegramLink.deleteMany(); } catch {}
   await prisma.user.deleteMany();
   console.log('✅ Tozalandi\n');
 
