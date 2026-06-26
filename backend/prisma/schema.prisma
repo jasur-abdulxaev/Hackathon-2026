@@ -1,0 +1,439 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============ ENUMS ============
+
+enum UserRole {
+  admin
+  teacher
+  student
+  filial_rahbari
+  assistant
+  moliya_rahbari
+  kassir
+  administrator
+  nazoratchi
+  hr_rahbari
+  sotuv_operatori
+  farrosh
+  robototexnika_ustoz
+  call_operatori
+}
+
+enum SubmissionStatus {
+  pending
+  checked
+}
+
+enum SubmissionResult {
+  green
+  blue
+  red
+}
+
+// ============ MODELS ============
+
+/// Foydalanuvchilar (Admin, O'qituvchi, O'quvchi)
+model User {
+  id           String   @id @default(uuid()) @db.Uuid
+  fullName     String   @map("full_name") @db.VarChar(100)
+  login        String   @unique @db.VarChar(50)
+  passwordHash String   @map("password_hash")
+  role         UserRole
+  avatarUrl    String?  @map("avatar_url")
+  isActive     Boolean  @default(true) @map("is_active")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  // Relations
+  teacherGroups  Group[]          @relation("TeacherGroups")
+  groupStudents  GroupStudent[]
+  submissions    Submission[]     @relation("StudentSubmissions")
+  checkedBy      Submission[]     @relation("CheckedByTeacher")
+  notifications       Notification[]
+  auditLogs           AuditLog[]
+  checklistEntries    DailyChecklistEntry[]
+  frozenEntries       StudentFreeze[]   @relation("FrozenStudents")
+  frozenByEntries     StudentFreeze[]   @relation("FrozenBy")
+  monitoringCalls     MonitoringCall[]  @relation("MonitoringCalledBy")
+  monitoringNotes     MonitoringNote[]  @relation("MonitoringNotes")
+  feedbacksWritten    StudentFeedback[] @relation("FeedbackByStudent")
+  feedbacksReceived   StudentFeedback[] @relation("FeedbackForTeacher")
+  telegramLinks       TelegramLink[]    @relation("TelegramStudentLinks")
+  feedbackStudent     TelegramFeedback[] @relation("FeedbackStudent")
+  feedbackTeacher     TelegramFeedback[] @relation("FeedbackTeacher")
+
+  @@map("users")
+}
+
+/// Guruhlar
+model Group {
+  id        String   @id @default(uuid()) @db.Uuid
+  name      String   @db.VarChar(50)
+  teacherId String?  @map("teacher_id") @db.Uuid
+  isActive  Boolean  @default(true) @map("is_active")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  // Relations
+  teacher        User?            @relation("TeacherGroups", fields: [teacherId], references: [id])
+  groupStudents  GroupStudent[]
+  groupNormatives GroupNormative[]
+  submissions    Submission[]
+  rankingCache   RankingCache[]
+  monitoringCalls MonitoringCall[]
+  feedbacks       StudentFeedback[]
+
+  @@map("groups")
+}
+
+/// Kategoriyalar (Yo'nalishlar: Foundation, Frontend, Backend)
+model Category {
+  id          String      @id @default(uuid()) @db.Uuid
+  name        String      @unique @db.VarChar(100)
+  description String?
+  isActive    Boolean     @default(true) @map("is_active")
+  createdAt   DateTime    @default(now()) @map("created_at")
+
+  // Relations
+  normatives  Normative[]
+
+  @@map("categories")
+}
+
+/// Guruh-O'quvchi bog'liqlik
+model GroupStudent {
+  id        String   @id @default(uuid()) @db.Uuid
+  groupId   String   @map("group_id") @db.Uuid
+  studentId String   @map("student_id") @db.Uuid
+  joinedAt  DateTime @default(now()) @map("joined_at")
+
+  // Relations
+  group   Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  student User  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@unique([groupId, studentId])
+  @@map("group_students")
+}
+
+/// Normativlar (Funksiya/Vazifalar)
+model Normative {
+  id          String   @id @default(uuid()) @db.Uuid
+  taskNumber  Int      @map("task_number")
+  title       String
+  description String?
+  timeLimit   Int?     @map("time_limit")
+  url         String?
+  maxScore    Int      @default(40) @map("max_score")
+  isActive    Boolean  @default(true) @map("is_active")
+  categoryId  String?  @map("category_id") @db.Uuid
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  // Relations
+  category        Category?         @relation(fields: [categoryId], references: [id])
+  groupNormatives GroupNormative[]
+  submissions     Submission[]
+
+  @@map("normatives")
+}
+
+/// Guruh-Normativ bog'liqlik
+model GroupNormative {
+  id          String   @id @default(uuid()) @db.Uuid
+  groupId     String   @map("group_id") @db.Uuid
+  normativeId String   @map("normative_id") @db.Uuid
+  assignedAt  DateTime @default(now()) @map("assigned_at")
+
+  // Relations
+  group     Group     @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  normative Normative @relation(fields: [normativeId], references: [id], onDelete: Cascade)
+
+  @@unique([groupId, normativeId])
+  @@map("group_normatives")
+}
+
+/// O'quvchi Topshiriqlari (Submissions)
+model Submission {
+  id          String           @id @default(uuid()) @db.Uuid
+  studentId   String           @map("student_id") @db.Uuid
+  normativeId String           @map("normative_id") @db.Uuid
+  groupId     String?          @map("group_id") @db.Uuid
+  youtubeUrl  String           @map("youtube_url")
+  submittedAt DateTime         @default(now()) @map("submitted_at")
+  status      SubmissionStatus @default(pending)
+  canResubmit Boolean          @default(false) @map("can_resubmit")
+
+  // O'qituvchi tekshirgandan so'ng
+  checkedById String?          @map("checked_by") @db.Uuid
+  checkedAt   DateTime?        @map("checked_at")
+  result      SubmissionResult?
+  score       Int              @default(0)
+  comment     String?
+
+  // Relations
+  student   User      @relation("StudentSubmissions", fields: [studentId], references: [id], onDelete: Cascade)
+  normative Normative @relation(fields: [normativeId], references: [id], onDelete: Cascade)
+  group     Group?    @relation(fields: [groupId], references: [id])
+  checkedBy User?     @relation("CheckedByTeacher", fields: [checkedById], references: [id])
+
+  @@unique([studentId, normativeId, groupId])
+  @@map("submissions")
+}
+
+/// Reyting Cache (kunlik hisoblash)
+model RankingCache {
+  id           String   @id @default(uuid()) @db.Uuid
+  studentId    String   @map("student_id") @db.Uuid
+  groupId      String?  @map("group_id") @db.Uuid
+  totalScore   Int      @default(0) @map("total_score")
+  completed    Int      @default(0)
+  pending      Int      @default(0)
+  rankInGroup  Int?     @map("rank_in_group")
+  rankOverall  Int?     @map("rank_overall")
+  updatedAt    DateTime @default(now()) @updatedAt @map("updated_at")
+
+  // Relations
+  group Group? @relation(fields: [groupId], references: [id])
+
+  @@map("ranking_cache")
+}
+
+/// Audit Log (kim nima qildi)
+model AuditLog {
+  id         String   @id @default(uuid()) @db.Uuid
+  userId     String?  @map("user_id") @db.Uuid
+  action     String   @db.VarChar(100)
+  targetType String?  @map("target_type") @db.VarChar(50)
+  targetId   String?  @map("target_id") @db.Uuid
+  details    Json?
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  // Relations
+  user User? @relation(fields: [userId], references: [id])
+
+  @@map("audit_logs")
+}
+
+/// Xabarnomalar
+model Notification {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  type      String   @db.VarChar(50)
+  title     String
+  body      String?
+  isRead    Boolean  @default(false) @map("is_read")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("notifications")
+}
+
+/// Kunlik Checklist elementlari (template)
+model ChecklistItem {
+  id          String   @id @default(uuid()) @db.Uuid
+  role        UserRole
+  order       Int
+  score       Int      @default(1)
+  section     String?  @db.VarChar(200)
+  category    String   @db.VarChar(200)
+  description String?
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  // Relations
+  entries DailyChecklistEntry[]
+
+  @@map("checklist_items")
+}
+
+/// Kunlik Checklist yozuvlari (kim, qachon, bajarildimi)
+model DailyChecklistEntry {
+  id              String        @id @default(uuid()) @db.Uuid
+  userId          String        @map("user_id") @db.Uuid
+  checklistItemId String        @map("checklist_item_id") @db.Uuid
+  date            DateTime      @db.Date
+  isDone          Boolean       @default(false) @map("is_done")
+  doneAt          DateTime?     @map("done_at")
+
+  // Relations
+  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  checklistItem ChecklistItem @relation(fields: [checklistItemId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, checklistItemId, date])
+  @@map("daily_checklist_entries")
+}
+
+// ============ FREEZE SYSTEM ============
+
+enum FreezeReason {
+  moliyaviy           // Moliyaviy (to'lov)
+  kochib_ketish       // Ko'chib/safarga ketish
+  vaqtincha_toxtatgan // Vaqtincha to'xtatgan (qaytish rejasi bor)
+  kasallik            // Kasallik
+  kanikul             // Lager/Kanikul (vaqtinchalik)
+  boshqa_fan          // Boshqa fan/sertifikatga o'tish
+  kurs_tugadi         // Kurs tugadi, davomi yo'q
+  motivatsiya         // Motivatsiya/oilaviy sabab
+  ish_tadbir          // Ishga ketish/oilaviy tadbir
+  universitet         // Universitet sessiyasi
+  shaxsiy             // Shaxsiy sabab
+  oqituvchidan_norozi // O'qituvchidan norozilik
+  boshqa              // Boshqa
+  sabab_korsatilmagan // Sabab ko'rsatilmagan
+}
+
+/// Muzlatilgan O'quvchilar (Ketish Hisoboti)
+model StudentFreeze {
+  id           String       @id @default(uuid()) @db.Uuid
+  studentId    String       @map("student_id") @db.Uuid
+  frozenById   String       @map("frozen_by_id") @db.Uuid
+  frozenAt     DateTime     @default(now()) @map("frozen_at")
+  month        Int          // Muzlatilgan oy (1-12)
+  year         Int          // Muzlatilgan yil (2025, 2026...)
+  reason       FreezeReason // Sabab kategoriyasi
+  detailedNote String?      @map("detailed_note") @db.VarChar(1000)
+  phone        String?      @db.VarChar(30)
+  startDate    DateTime?    @map("start_date") // Kursga kirgan sana
+  filial       String?      @db.VarChar(100)  // Filial (Beeline, Stomatologiya...)
+
+  // Muzlatish vaqtidagi snapshot (o'zgarmas qoladi)
+  studentName  String       @map("student_name") @db.VarChar(200)
+  teacherName  String?      @map("teacher_name") @db.VarChar(200)
+  groupName    String?      @map("group_name")   @db.VarChar(100)
+
+  createdAt    DateTime     @default(now()) @map("created_at")
+
+  // Relations
+  student  User @relation("FrozenStudents", fields: [studentId], references: [id])
+  frozenBy User @relation("FrozenBy",       fields: [frozenById],  references: [id])
+
+  @@map("student_freezes")
+}
+
+// ============ MONITORING SYSTEM ============
+
+enum MonitoringMood {
+  yaxshi          // 😊 Hamma narsa yaxshi
+  oddiy           // 😐 Alohida shikoyat yo'q
+  yomon           // 😟 Muammo bor, norozilik
+  javob_bermadi   // 📵 Telefonga javob bermadi
+}
+
+/// Monitoring qo'ng'iroq sessiyasi (administrator qaysi guruhga qo'ng'iroq qildi)
+model MonitoringCall {
+  id          String   @id @default(uuid()) @db.Uuid
+  groupId     String   @map("group_id") @db.Uuid
+  calledById  String   @map("called_by_id") @db.Uuid
+  callDate    DateTime @default(now()) @map("call_date")
+  summary     String?  @db.VarChar(500)  // Umumiy qisqa izoh
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  // Relations
+  group    Group  @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  calledBy User   @relation("MonitoringCalledBy", fields: [calledById], references: [id])
+  notes    MonitoringNote[]
+
+  @@map("monitoring_calls")
+}
+
+/// Har bir o'quvchi uchun monitoring fikri
+model MonitoringNote {
+  id       String          @id @default(uuid()) @db.Uuid
+  callId   String          @map("call_id") @db.Uuid
+  studentId String         @map("student_id") @db.Uuid
+  mood     MonitoringMood
+  note     String          @db.VarChar(2000)
+  tags     String[]        @default([])
+  createdAt DateTime       @default(now()) @map("created_at")
+  updatedAt DateTime       @updatedAt @map("updated_at")
+
+  // Relations
+  call    MonitoringCall @relation(fields: [callId], references: [id], onDelete: Cascade)
+  student User           @relation("MonitoringNotes", fields: [studentId], references: [id])
+
+  @@map("monitoring_notes")
+}
+
+// ============ TELEGRAM BOT SYSTEM ============
+
+/// Telegram Chat bog'lanishi (Ota-ona/Operator → O'quvchi)
+model TelegramLink {
+  id           String   @id @default(uuid()) @db.Uuid
+  telegramId   BigInt   @unique @map("telegram_id")        // Telegram user ID
+  chatId       BigInt   @map("chat_id")                    // Telegram chat ID
+  studentId    String   @map("student_id") @db.Uuid        // Bog'langan o'quvchi
+  role         String   @default("parent") @db.VarChar(20) // "parent" | "operator"
+  fullName     String?  @map("full_name") @db.VarChar(200)
+  username     String?  @db.VarChar(100)                    // @username
+  isActive     Boolean  @default(true) @map("is_active")
+  language     String   @default("uz") @db.VarChar(5)      // "uz" | "ru"
+  notifyOnCheck    Boolean @default(true) @map("notify_on_check")
+  notifyOnRank     Boolean @default(true) @map("notify_on_rank")
+  notifyWeekly     Boolean @default(true) @map("notify_weekly")
+  notifyInactivity Boolean @default(true) @map("notify_inactivity")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  // Relations
+  student User @relation("TelegramStudentLinks", fields: [studentId], references: [id])
+
+  @@map("telegram_links")
+}
+
+/// Telegram orqali yuborilgan feedback (ota-ona → o'qituvchi)
+model TelegramFeedback {
+  id         String    @id @default(uuid()) @db.Uuid
+  telegramId BigInt    @map("telegram_id")
+  studentId  String    @map("student_id") @db.Uuid
+  teacherId  String?   @map("teacher_id") @db.Uuid
+  message    String    @db.VarChar(2000)
+  isRead     Boolean   @default(false) @map("is_read")
+  repliedAt  DateTime? @map("replied_at")
+  replyText  String?   @map("reply_text") @db.VarChar(2000)
+  createdAt  DateTime  @default(now()) @map("created_at")
+
+  // Relations
+  student User  @relation("FeedbackStudent", fields: [studentId], references: [id])
+  teacher User? @relation("FeedbackTeacher", fields: [teacherId], references: [id])
+
+  @@map("telegram_feedbacks")
+}
+
+/// AI tomonidan yaratilgan tahlil hisobotlari (cache)
+model MonitoringAIReport {
+  id          String   @id @default(uuid()) @db.Uuid
+  groupId     String?  @map("group_id") @db.Uuid
+  teacherId   String?  @map("teacher_id") @db.Uuid
+  reportType  String   @db.VarChar(50)  // "group_analysis" | "teacher_analysis" | "overall"
+  content     String   // AI javob matni (plain text)
+  period      String   @db.VarChar(20)  // "2026-06"
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@map("monitoring_ai_reports")
+}
+
+/// Student feedback for teacher
+model StudentFeedback {
+  id          String   @id @default(uuid()) @db.Uuid
+  studentId   String   @map("student_id") @db.Uuid
+  teacherId   String   @map("teacher_id") @db.Uuid
+  groupId     String   @map("group_id") @db.Uuid
+  rating      Int      // 1-5
+  comment     String?  @db.VarChar(500)
+  isAnonymous Boolean  @default(true) @map("is_anonymous")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  student User  @relation("FeedbackByStudent", fields: [studentId], references: [id])
+  teacher User  @relation("FeedbackForTeacher", fields: [teacherId], references: [id])
+  group   Group @relation(fields: [groupId], references: [id])
+
+  @@map("student_feedbacks")
+}
