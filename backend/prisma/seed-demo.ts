@@ -1,5 +1,5 @@
 /**
- * DEMO SEED SCRIPT — testalpha.xperia.uz uchun
+ * DEMO SEED SCRIPT — xperia.testalpha.uz uchun
  * 
  * Ishlatish:
  *   npx tsx prisma/seed-demo.ts
@@ -586,7 +586,7 @@ async function main() {
   console.log('│ demo_teacher1       │ O\'qituvchi           │ Nazarov Javlon           │');
   console.log('│ demo_student        │ O\'quvchi             │ Valiyev Jasur            │');
   console.log('└─────────────────────┴──────────────────────┴──────────────────────────┘');
-  console.log('\n🌐 Demo tizim: https://testalpha.xperia.uz');
+  console.log('\n🌐 Demo tizim: https://xperia.testalpha.uz');
 }
 
 main()

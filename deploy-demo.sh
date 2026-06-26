@@ -90,13 +90,13 @@ fi
 
 # Nginx konfiguratsiyasi yozish
 cat > "${NGINX_CONF}" << EOF
-# Demo tizim — testalpha.xperia.uz
+# Demo tizim — xperia.testalpha.uz
 # Avtomatik yaratildi: $(date)
 
 server {
     listen 80;
     listen [::]:80;
-    server_name testalpha.xperia.uz;
+    server_name xperia.testalpha.uz;
 
     add_header X-Demo-Environment "true" always;
 
@@ -159,7 +159,7 @@ echo "╔═══════════════════════�
 echo "║                    DEPLOYMENT TUGADI! 🎉                    ║"
 echo "╠══════════════════════════════════════════════════════════════╣"
 echo "║                                                              ║"
-echo "║  🌐 Demo tizim:    http://testalpha.xperia.uz               ║"
+echo "║  🌐 Demo tizim:    http://xperia.testalpha.uz               ║"
 echo "║  🔌 Internal port: $DEMO_PORT (faqat server ichida)               ║"
 echo "║                                                              ║"
 echo "║  🔑 Login ma'lumotlari (parol: Demo@2026!):                 ║"
@@ -173,7 +173,7 @@ echo "║     To'xtatish: docker-compose -f docker-compose.demo.yml down║"
 echo "║     Qayta seed: npm run demo:seed                            ║"
 echo "║                                                              ║"
 echo "║  ⚠️  SSL uchun:                                              ║"
-echo "║     certbot --nginx -d testalpha.xperia.uz                   ║"
+echo "║     certbot --nginx -d xperia.testalpha.uz                   ║"
 echo "║                                                              ║"
 echo "╚══════════════════════════════════════════════════════════════╝"
 echo ""
