@@ -154,76 +154,9 @@ export default function ExportPage() {
             </>
           )}
 
-          {/* Guruh Hisoboti */}
-          <div className="glass rounded-2xl p-6 border border-slate-700/50 flex flex-col h-full">
-            <div className="w-12 h-12 rounded-xl bg-blue-500/10 flex items-center justify-center mb-4">
-              <Users className="w-6 h-6 text-blue-400" />
-            </div>
-            <h3 className="text-lg font-bold text-white mb-2">Guruh Natijalari</h3>
-            <p className="text-sm text-slate-400 mb-6 flex-1">
-              Muayyan guruhdagi barcha o'quvchilarning har bir normativ bo'yicha olgan ballari va topshiriq tarixi.
-            </p>
-            
-            <form onSubmit={handleExportGroup} className="mt-auto">
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  value={groupId}
-                  onChange={(e) => setGroupId(e.target.value)}
-                  placeholder="Guruh ID sini kiriting..."
-                  className="flex-1 px-4 py-2.5 rounded-xl bg-slate-800 border border-slate-600/50 text-white text-sm focus:outline-none focus:border-primary-500"
-                  required
-                />
-                <button
-                  type="submit"
-                  disabled={exportingGroup || !groupId.trim()}
-                  className="py-2.5 px-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-medium text-sm transition-all shadow-lg shadow-blue-500/20 flex items-center justify-center disabled:opacity-50"
-                >
-                  {exportingGroup ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
-                </button>
-              </div>
-            </form>
-          </div>
 
-          {/* Backup Block */}
-          {user?.role === 'admin' && (
-            <div className="glass rounded-2xl p-6 border border-red-500/30 flex flex-col h-full col-span-1 md:col-span-2 relative overflow-hidden mt-6">
-              <div className="absolute top-0 right-0 w-64 h-64 bg-red-500/10 blur-3xl rounded-full translate-x-1/2 -translate-y-1/2"></div>
-              
-              <div className="flex items-center gap-4 mb-4 relative z-10">
-                <div className="w-12 h-12 rounded-xl bg-red-500/20 flex items-center justify-center">
-                  <Database className="w-6 h-6 text-red-500" />
-                </div>
-                <div>
-                  <h3 className="text-xl font-bold text-white">Tizimni Saqlash va Tiklash (Backup)</h3>
-                  <p className="text-sm text-red-400">Server almashganda yoki ehtiyot sharti uchun to'liq bazani olish</p>
-                </div>
-              </div>
-              
-              <p className="text-sm text-slate-300 mb-6 relative z-10">
-                Ushbu bo'lim orqali tizimdagi barcha foydalanuvchilar, guruhlar, va natijalarni <b>JSON fayl</b> ko'rinishida o'zingizga ko'chirib olishingiz mumkin. Keyinchalik shu faylni yuklash orqali tizimni aynan o'sha holatga tiklash mumkin.
-              </p>
-              
-              <div className="flex flex-col sm:flex-row gap-4 mt-auto relative z-10">
-                <button
-                  onClick={handleBackupDownload}
-                  disabled={backingUp}
-                  className="flex-1 py-3 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-medium text-sm transition-all border border-slate-600 flex items-center justify-center gap-2 disabled:opacity-50"
-                >
-                  {backingUp ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
-                  Barcha ma'lumotlarni yuklab olish (.json)
-                </button>
-                
-                <label className="flex-1 cursor-pointer">
-                  <input type="file" accept=".json" className="hidden" onChange={handleBackupRestore} disabled={restoring} />
-                  <div className={`h-full py-3 px-4 rounded-xl font-bold text-sm transition-all shadow-lg flex items-center justify-center gap-2 ${restoring ? 'bg-zinc-600 cursor-not-allowed text-zinc-300' : 'bg-red-600 hover:bg-red-500 text-white shadow-red-500/20'}`}>
-                    {restoring ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
-                    Fayl orqali tizimni qayta tiklash
-                  </div>
-                </label>
-              </div>
-            </div>
-          )}
+
+
 
         </div>
       </div>
