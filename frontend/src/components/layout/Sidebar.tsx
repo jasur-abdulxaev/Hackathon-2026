@@ -138,8 +138,8 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
               <GraduationCap className="w-5 h-5 text-white" />
             </div>
             <div className="flex flex-col">
-              <h1 className="text-lg font-bold text-white tracking-tight leading-none mb-0.5">ILS</h1>
-              <p className="text-[10px] text-zinc-400 font-medium leading-none">IT Live Score</p>
+              <h1 className="text-lg font-bold text-white tracking-tight leading-none mb-0.5">Xperience</h1>
+              <p className="text-[10px] text-zinc-400 font-medium leading-none">O'quv markaz platformasi</p>
             </div>
           </div>
           {/* Close button - mobile only */}

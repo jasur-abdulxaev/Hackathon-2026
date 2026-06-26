@@ -17,7 +17,7 @@ export default function AIChatbot() {
     {
       id: '0',
       role: 'bot',
-      text: `Salom, ${user?.fullName?.split(' ')[0] || 'foydalanuvchi'}! 👋 Men ILS AI yordamchisiman. Platformadan foydalanish, normativlar yoki statistika haqida savollaringizga javob beraman. Qanday yordam kerak?`,
+      text: `Salom, ${user?.fullName?.split(' ')[0] || 'foydalanuvchi'}! 👋 Men Xperience AI yordamchisiman. Platformadan foydalanish, normativlar yoki statistika haqida savollaringizga javob beraman. Qanday yordam kerak?`,
       timestamp: new Date(),
     },
   ]);
@@ -129,7 +129,7 @@ export default function AIChatbot() {
               <Sparkles className="w-5 h-5 text-white" />
             </div>
             <div>
-              <p className="text-white font-semibold text-sm">ILS AI Yordamchi</p>
+              <p className="text-white font-semibold text-sm">Xperience AI Yordamchi</p>
               <p className="text-blue-200 text-[11px] flex items-center gap-1">
                 <span className="w-1.5 h-1.5 bg-green-400 rounded-full inline-block" />
                 Onlayn

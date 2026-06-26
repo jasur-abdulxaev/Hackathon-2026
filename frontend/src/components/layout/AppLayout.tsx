@@ -18,7 +18,7 @@ export default function AppLayout() {
           >
             <Menu className="w-5 h-5" />
           </button>
-          <span className="text-sm font-bold text-white">ILS</span>
+          <span className="text-sm font-bold text-white">Xperience</span>
         </div>
         <div className="flex-1 w-full max-w-7xl mx-auto">
           <Outlet />

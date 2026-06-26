@@ -55,8 +55,8 @@ export default function LoginPage() {
           <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-blue-600 mb-5 shadow-[0_0_40px_-10px_rgba(37,99,235,0.5)]">
             <GraduationCap className="w-7 h-7 text-white" />
           </div>
-          <h1 className="text-3xl font-bold text-white tracking-tight leading-none mb-1">ILS</h1>
-          <h2 className="text-sm text-zinc-300 font-medium tracking-wide mb-2 uppercase">IT Live Score</h2>
+          <h1 className="text-3xl font-bold text-white tracking-tight leading-none mb-1">Xperience</h1>
+          <h2 className="text-sm text-zinc-300 font-medium tracking-wide mb-2 uppercase">O'quv markaz platformasi</h2>
           <p className="text-sm text-zinc-400">O'quv markaz platformasiga kirish</p>
         </div>
 
