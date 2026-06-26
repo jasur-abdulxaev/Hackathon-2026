@@ -94,23 +94,26 @@ async function main() {
 
   // ===== 1. BARCHA ESKI MA'LUMOTLARNI TOZALASH =====
   console.log('🗑️  Eski ma\'lumotlar tozalanmoqda...');
-  await prisma.monitoringNote.deleteMany();
-  await prisma.monitoringCall.deleteMany();
-  await prisma.monitoringAIReport.deleteMany();
-  await prisma.studentFreeze.deleteMany();
-  await prisma.dailyChecklistEntry.deleteMany();
-  await prisma.notification.deleteMany();
-  await prisma.auditLog.deleteMany();
-  await prisma.rankingCache.deleteMany();
-  await prisma.submission.deleteMany();
-  await prisma.groupNormative.deleteMany();
-  await prisma.groupStudent.deleteMany();
-  await prisma.group.deleteMany();
-  await prisma.normative.deleteMany();
-  await prisma.category.deleteMany();
-  // telegram_links foreign key ni avval tozalash kerak
-  try { await (prisma as any).telegramLink.deleteMany(); } catch {}
-  await prisma.user.deleteMany();
+  // Barcha bog'liq jadvallarni CASCADE bilan tozalash (FK muammolarsiz)
+  await prisma.$executeRawUnsafe(`
+    TRUNCATE TABLE
+      monitoring_notes,
+      monitoring_calls,
+      monitoring_ai_reports,
+      student_freezes,
+      daily_checklist_entries,
+      notifications,
+      audit_logs,
+      ranking_cache,
+      submissions,
+      group_normatives,
+      group_students,
+      groups,
+      normatives,
+      categories,
+      users
+    RESTART IDENTITY CASCADE
+  `);
   console.log('✅ Tozalandi\n');
 
   const passwordHash = await bcrypt.hash('Demo@2026!', 10);
@@ -418,7 +421,7 @@ async function main() {
     await prisma.studentFreeze.create({
       data: {
         studentId: students[studentIdx].id,
-        frozenById: randomItem([admin.id, kassir.id, administrator.id]),
+        frozenById: randomItem([admin.id, callOp.id]),
         month,
         year,
         reason: randomItem(freezeReasons),
@@ -483,7 +486,7 @@ async function main() {
       const call = await prisma.monitoringCall.create({
         data: {
           groupId: group.id,
-          calledById: administrator.id,
+          calledById: callOp.id,
           callDate: randomDate(30),
           summary: `${group.name} guruhi bilan aloqa. Umumiy holat ${c === 0 ? 'yaxshi' : 'normal'}.`,
         },
@@ -555,7 +558,7 @@ async function main() {
   console.log('🎉 DEMO SEED MUVAFFAQIYATLI TUGADI!');
   console.log('='.repeat(60));
   console.log('\n📊 Statistika:');
-  console.log(`   👤 Foydalanuvchilar: ${students.length + teachers.length + 4} ta`);
+  console.log(`   👤 Foydalanuvchilar: ${students.length + teachers.length + 2} ta`);
   console.log(`   🏫 Guruhlar: ${groups.length} ta`);
   console.log(`   📋 Normativlar: ${allNorms.length} ta`);
   console.log(`   📝 Submissionlar: ${submissionCount} ta`);
@@ -566,9 +569,7 @@ async function main() {
   console.log('│ Login               │ Rol                  │ Ism                      │');
   console.log('├─────────────────────┼──────────────────────┼──────────────────────────┤');
   console.log('│ demo_admin          │ Admin                │ Yusupov Sardor           │');
-  console.log('│ demo_rahbar         │ Filial Rahbari       │ Toshmatova Malika        │');
-  console.log('│ demo_kassir         │ Kassir               │ Ergashev Sherzod         │');
-  console.log('│ demo_administrator  │ Administrator        │ Rahimova Dilfuza         │');
+  console.log('│ demo_call_op        │ Call Operatori       │ Qodirov Mansur           │');
   console.log('│ demo_teacher1       │ O\'qituvchi           │ Nazarov Javlon           │');
   console.log('│ demo_student        │ O\'quvchi             │ Valiyev Jasur            │');
   console.log('└─────────────────────┴──────────────────────┴──────────────────────────┘');
