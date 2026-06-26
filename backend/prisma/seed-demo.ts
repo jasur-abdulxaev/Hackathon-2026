@@ -5,7 +5,7 @@
  *   npx tsx prisma/seed-demo.ts
  * 
  * Yaratiladi:
- *   - 2 admin, 1 filial_rahbari, 1 kassir, 1 sotuv_operatori
+ *   - 1 admin, 1 call_operatori
  *   - 8 o'qituvchi
  *   - 18 guruh (Foundation, Frontend, Backend, Robototexnika)
  *   - 200+ o'quvchi
@@ -125,32 +125,16 @@ async function main() {
     },
   });
 
-  const admin2 = await prisma.user.create({
+  const callOp = await prisma.user.create({
     data: {
-      fullName: 'Toshmatova Malika',
-      login: 'demo_rahbar',
+      fullName: 'Qodirov Mansur',
+      login: 'demo_call_op',
       passwordHash,
-      role: 'filial_rahbari',
+      role: 'call_operatori',
     },
   });
 
-  const kassir = await prisma.user.create({
-    data: {
-      fullName: 'Ergashev Sherzod',
-      login: 'demo_kassir',
-      passwordHash,
-      role: 'kassir',
-    },
-  });
-
-  const administrator = await prisma.user.create({
-    data: {
-      fullName: 'Rahimova Dilfuza',
-      login: 'demo_administrator',
-      passwordHash,
-      role: 'administrator',
-    },
-  });
+  console.log('✅ Admin va call operatori yaratildi');
 
   // ===== 3. O'QITUVCHILAR =====
   const teacherData = [
