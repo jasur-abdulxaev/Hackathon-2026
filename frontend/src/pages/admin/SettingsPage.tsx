@@ -386,6 +386,9 @@ export default function SettingsPage() {
               </div>
             </div>
           </div>
+        </div>
+      )}
+
               {/* Tutorial Modal */}
       {showTutorialModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
@@ -792,12 +795,8 @@ export default function SettingsPage() {
               {aiSaving ? 'Saqlanmoqda...' : 'Saqlash'}
             </button>
           </div>
+          </div>
         </div>
-
-        
-        </div>
-      )}
-</div>
       )}
     </div>
   );
