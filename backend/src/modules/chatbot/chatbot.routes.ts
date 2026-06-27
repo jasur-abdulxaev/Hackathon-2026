@@ -59,7 +59,7 @@ router.post('/ask', async (req: Request, res: Response, next: NextFunction) => {
 
     const roleGuide = ROLE_GUIDES[userRole] || ROLE_GUIDES['student'];
 
-    const prompt = `Sen "ILS — IT Live Score" platformasining yordamchi botisan.
+    const prompt = `Sen "Xperience" platformasining yordamchi botisan.
 Foydalanuvchi roli: ${userRole}
 
 Bu platformaning imkoniyatlari:
@@ -67,7 +67,7 @@ ${roleGuide}
 
 QOIDALAR:
 1. FAQAT shu platforma haqida javob ber
-2. Boshqa temadagi savollarga: "Kechirasiz, men faqat ILS platformasi haqida yordam bera olaman 😊" de
+2. Boshqa temadagi savollarga: "Kechirasiz, men faqat Xperience platformasi haqida yordam bera olaman 😊" de
 3. Javob qisqa bo'lsin — 3-5 gap
 4. O'zbek tilida javob ber
 5. Samimiy va do'stona ohangda bo'l

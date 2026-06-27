@@ -19,7 +19,7 @@ NGINX_CONF="/etc/nginx/sites-available/testalpha-xperia-demo"
 NGINX_ENABLED="/etc/nginx/sites-enabled/testalpha-xperia-demo"
 
 echo "╔══════════════════════════════════════════════╗"
-echo "║   IT Live Score — Demo Tizim Deployment      ║"
+echo "║   Xperience — Demo Tizim Deployment      ║"
 echo "╚══════════════════════════════════════════════╝"
 echo ""
 
