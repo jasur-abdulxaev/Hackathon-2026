@@ -27,6 +27,7 @@ import monitoringRoutes from './modules/monitoring/monitoring.routes';
 import { notificationEngine } from './modules/notifications/notification-engine';
 import chatbotRoutes from './modules/chatbot/chatbot.routes';
 import predictionsRoutes from './modules/predictions/predictions.routes';
+import proctoringRoutes from './modules/proctoring/proctoring.routes';
 import feedbackRoutes from './modules/feedback/feedback.routes';
 import { startBot } from './modules/bot/bot';
 
@@ -88,7 +89,9 @@ app.use('/api/checklist', checklistRoutes);
 app.use('/api/freezes', freezesRoutes);
 app.use('/api/monitoring', monitoringRoutes);
 app.use('/api/chatbot', chatbotRoutes);
-app.use('/api/predictions', predictionsRoutes);
+app.use('/api/v1/statistics', statisticsRoutes);
+app.use('/api/v1/predictions', predictionsRoutes);
+app.use('/api/v1/proctoring', proctoringRoutes);
 app.use('/api/feedback', feedbackRoutes);
 
 // 404 handler

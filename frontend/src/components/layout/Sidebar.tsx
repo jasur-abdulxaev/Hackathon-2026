@@ -3,7 +3,7 @@ import { useAuthStore } from '@/stores/authStore';
 import {
   LayoutDashboard, Users, FolderOpen, BookOpen, ClipboardCheck,
   BarChart3, Trophy, Download, LogOut, GraduationCap, Video, Settings, X, ClipboardList,
-  Snowflake, Star, Phone, TrendingDown
+  Snowflake, Star, Phone, TrendingDown, ShieldCheck
 } from 'lucide-react';
 
 const adminLinks = [
@@ -20,6 +20,7 @@ const adminLinks = [
   { to: '/admin/checklist-manage', icon: ClipboardList, label: 'Cheklist Boshqaruv' },
   { to: '/admin/predictions', icon: TrendingDown, label: 'AI Prognozlar' },
   { to: '/admin/rankings', icon: Trophy, label: 'Reyting' },
+  { to: '/admin/proctoring', icon: ShieldCheck, label: 'AI Proctoring' },
   { to: '/admin/export', icon: Download, label: 'Eksport' },
   { to: '/admin/settings', icon: Settings, label: 'Sozlamalar' },
 ];
@@ -39,6 +40,7 @@ const studentLinks = [
   { to: '/student/my-normatives', icon: Video, label: "Qoidalar va Ko'rsatmalar" },
   { to: '/student/normatives', icon: BookOpen, label: 'Normativlar' },
   { to: '/student/history', icon: ClipboardCheck, label: 'Topshiriqlarim' },
+  { to: '/student/proctoring', icon: ShieldCheck, label: 'AI Imtihon' },
   { to: '/student/ranking', icon: Trophy, label: 'Reyting' },
 ];
 

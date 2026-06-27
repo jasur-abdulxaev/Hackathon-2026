@@ -34,6 +34,8 @@ import TeacherRatingPage from '@/pages/admin/TeacherRatingPage';
 import ChecklistStatsPage from '@/pages/admin/ChecklistStatsPage';
 import ChecklistManagePage from '@/pages/admin/ChecklistManagePage';
 import PredictionsPage from '@/pages/admin/PredictionsPage';
+import ProctoringResultsPage from '@/pages/admin/ProctoringResultsPage';
+import ProctoringExamPage from '@/pages/student/ProctoringExamPage';
 import AIChatbot from '@/components/AIChatbot';
 import { socket } from '@/utils/socket';
 import { useEffect } from 'react';
@@ -151,6 +153,7 @@ export default function App() {
               <Route path="/admin/checklist-stats" element={<ChecklistStatsPage />} />
               <Route path="/admin/checklist-manage" element={<ChecklistManagePage />} />
               <Route path="/admin/predictions" element={<PredictionsPage />} />
+              <Route path="/admin/proctoring" element={<ProctoringResultsPage />} />
             </Route>
 
             {/* Teacher routes */}
@@ -185,6 +188,7 @@ export default function App() {
               <Route path="/student/history" element={<StudentHistoryPage />} />
               <Route path="/student/my-normatives" element={<MyNormativesGuidePage />} />
               <Route path="/student/ranking" element={<StudentRankingPage />} />
+              <Route path="/student/proctoring" element={<ProctoringExamPage />} />
             </Route>
 
             {/* Viewer routes — all new roles */}
