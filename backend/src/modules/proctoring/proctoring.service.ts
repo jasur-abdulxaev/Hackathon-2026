@@ -1,4 +1,3 @@
-import fetch from 'node-fetch';
 import { generateText, getAISettings } from '../../shared/utils/ai';
 
 export const checkProctoringImage = async (photoBase64: string) => {
