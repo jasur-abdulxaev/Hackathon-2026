@@ -30,8 +30,8 @@ jobs:
             git fetch origin
             git reset --hard origin/main
 
-            echo "🔨 Frontend qayta build qilish..."
-            docker-compose -f docker-compose.demo.yml build frontend_demo --no-cache
+            echo "🔨 Loyihani (Frontend va Backend) qayta build qilish..."
+            docker-compose -f docker-compose.demo.yml build frontend_demo backend_demo
 
             echo "🔄 Konteynerlarni yangilash..."
             docker-compose -f docker-compose.demo.yml up -d
