@@ -27,7 +27,8 @@ jobs:
             cd ~/ILS-startup/Xperience
 
             echo "📥 Yangi kodlarni olish..."
-            git pull origin main
+            git fetch origin
+            git reset --hard origin/main
 
             echo "🔨 Frontend qayta build qilish..."
             docker-compose -f docker-compose.demo.yml build frontend_demo --no-cache
